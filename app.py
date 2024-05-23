@@ -95,22 +95,22 @@ def generate_pdf(transaction_id, transactions):
     pdf.ln(10)
     pdf.set_font("Arial", size=10)
     for transaction in transactions:
-        pdf.cell(200, 10, txt=f"Item: {transaction['Item']} - Quantity: {transaction['Quantity']} - Harga: Rp {transaction['Harga']:,} - Subtotal: Rp {transaction['Subtotal']:,}", ln=True)
+        pdf.cell(200, 10, txt=f"Item: {transaction['Item']} - Quantity: {transaction['Quantity']} - Harga: ¥ {transaction['Harga']:,} - Subtotal: ¥ {transaction['Subtotal']:,}", ln=True)
     
     total_price = sum([transaction['Subtotal'] for transaction in transactions])
     given_cash = transactions[0]['Bayar']
     change = transactions[0]['Kembalian']
     
     pdf.ln(10)
-    pdf.cell(200, 10, txt=f"Total Price: Rp {total_price:,}", ln=True)
-    pdf.cell(200, 10, txt=f"Given Cash: Rp {given_cash:,}", ln=True)
-    pdf.cell(200, 10, txt=f"Change: Rp {change:,}", ln=True)
+    pdf.cell(200, 10, txt=f"Total Price: ¥ {total_price:,}", ln=True)
+    pdf.cell(200, 10, txt=f"Given Cash: ¥ {given_cash:,}", ln=True)
+    pdf.cell(200, 10, txt=f"Change: ¥ {change:,}", ln=True)
     
     return pdf.output(dest='S').encode('latin1')
 
-st.set_page_config(page_title="Waroeng Klasik", page_icon="🍜")
+st.set_page_config(page_title="Warung Nusantara Indonesia", page_icon="🍜")
 
-st.title("🍜 Waroeng Klasik")
+st.title("🍜 Warung Nusantara Indonesia")
 
 # Display menu items categorized by 'Kategori'
 for category, items in menu_items.items():
@@ -127,7 +127,7 @@ for category, items in menu_items.items():
                         'price': price,
                         'quantity': 1
                     }
-            st.write(f"Price: Rp {price:,}")
+            st.write(f"Price: ¥ {price:,}")
 
 # Display summary of all selected items
 st.write("## Summary")
@@ -151,7 +151,7 @@ if st.session_state['summary']:
         with col1:
             st.write(item)
         with col2:
-            st.write(f"Rp {details['price']:,}")
+            st.write(f"¥ {details['price']:,}")
         with col3:
             if st.button(f"➖", key=f"decrease_{item}"):
                 if details['quantity'] > 1:
@@ -164,19 +164,19 @@ if st.session_state['summary']:
                 st.session_state['summary'][item]['quantity'] += 1
                 st.rerun()
         with col4:
-            st.write(f"Rp {details['price'] * details['quantity']:,}")
+            st.write(f"¥ {details['price'] * details['quantity']:,}")
         with col5:
             if st.button(f"❌ Remove", key=f"remove_{item}"):
                 del st.session_state['summary'][item]
                 st.rerun()
 
     st.write(f"**Total Quantity: {total_quantity}**")
-    st.write(f"**Total Price: Rp {total_price:,}**")
+    st.write(f"**Total Price: ¥ {total_price:,}**")
 
     # Input for given cash
-    given_cash = st.number_input("Given Cash (Rp)", min_value=0, step=1000)
+    given_cash = st.number_input("Given Cash (¥)", min_value=0, step=1000)
     change = given_cash - total_price if given_cash >= total_price else 0
-    st.write(f"**Change: Rp {change:,}**")
+    st.write(f"**Change: ¥ {change:,}**")
 
     # Disable the checkout button if given cash is less than the total price
     can_checkout = given_cash >= total_price
@@ -201,9 +201,9 @@ if st.session_state['summary']:
 
         st.write(f"## Receipt for Transaction ID: {checkout_id}")
         st.write(f"**Waktu:** {checkout_time}")
-        st.write(f"**Total Price:** Rp {total_price:,}")
-        st.write(f"**Given Cash:** Rp {given_cash:,}")
-        st.write(f"**Change:** Rp {change:,}")
+        st.write(f"**Total Price:** ¥ {total_price:,}")
+        st.write(f"**Given Cash:** ¥ {given_cash:,}")
+        st.write(f"**Change:** ¥ {change:,}")
 
         st.session_state['summary'] = {}
         st.rerun()
@@ -238,15 +238,15 @@ if selected_transaction_id:
             with col1:
                 st.sidebar.write(item)
             with col2:
-                st.sidebar.write(f"Rp {int(price):,}")
+                st.sidebar.write(f"¥ {int(price):,}")
             with col3:
                 new_quantity = st.sidebar.number_input(f"Quantity ({item})", min_value=0, value=int(quantity), key=f"qty_{item}_{selected_transaction_id}")
                 if new_quantity != quantity:
                     update_transaction(selected_transaction_id, item, new_quantity, int(price))
             with col4:
-                st.sidebar.write(f"Subtotal: Rp {int(subtotal):,}")
+                st.sidebar.write(f"Subtotal: ¥ {int(subtotal):,}")
             with col5:
-                st.sidebar.write(f"Total: Rp {int(total):,}")
+                st.sidebar.write(f"Total: ¥ {int(total):,}")
 
         transaction_df = pd.DataFrame(selected_transactions)
         transaction_df = transaction_df[["Item", "Quantity", "Harga", "Subtotal"]]
@@ -254,9 +254,9 @@ if selected_transaction_id:
         st.sidebar.dataframe(transaction_df)
 
         total_price = transaction_df["Subtotal"].sum()
-        st.sidebar.write(f"**Total Price: Rp {total_price:,}**")
-        st.sidebar.write(f"**Given Cash: Rp {given_cash:,}**")
-        st.sidebar.write(f"**Change: Rp {change:,}**")
+        st.sidebar.write(f"**Total Price: ¥ {total_price:,}**")
+        st.sidebar.write(f"**Given Cash: ¥ {given_cash:,}**")
+        st.sidebar.write(f"**Change: ¥ {change:,}**")
 
         # Add new menu item to the selected transaction
         st.sidebar.write("### Add Menu Item")
